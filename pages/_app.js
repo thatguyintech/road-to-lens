@@ -1,3 +1,5 @@
+// pages/_app.js
+
 import '../styles/globals.css'
 import { ApolloProvider } from "@apollo/client";
 import client from "../apollo-client";
