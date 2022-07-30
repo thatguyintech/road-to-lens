@@ -1,15 +1,20 @@
 # How to Create a Decentralized Twitter with Lens Protocol
 
 There's been a lot of discussion lately about how much control social media giants like Facebook and Twitter have. Regardless of what your opinion on it is, I'd like to share an experiment with you that is super exciting.
+
 This year, folks on the Aave team launched a project called Lens Protocol. It's one of the most exciting technologies to enter the web3 ecosystem lately, because it uses blockchain technology to give the power and control of data back to the users who are generating it.
+
 So I thought, why don't we all explore it together? It would be a fitting final lesson to combine everything you have learned so far :) 
+
 In this lesson, you will learn:
-How to set up a Next.js app with an Apollo GraphQL client
-How to use the Lens protocol API to fetch profiles, posts, and other data stored on the Polygon blockchain
-An introduction to the MintKudos API -- so that you can integrate your PoK tokens in your dapp!
-An introduction to Lit Protocol -- in case you want to encrypt certain posts to only be shown to various community members
-How to deploy your decentralized social media app frontend website using Repl.it
-Multiple challenge options to extend this project!
+
+* How to set up a Next.js app with an Apollo GraphQL client
+* How to use the Lens protocol API to fetch profiles, posts, and other data stored on the Polygon blockchain
+* An introduction to the MintKudos API -- so that you can integrate your PoK tokens in your dapp!
+* An introduction to Lit Protocol -- in case you want to encrypt certain posts to only be shown to various community members
+* How to deploy your decentralized social media app frontend website using Repl.it
+* Multiple challenge options to extend this project!
+
 Let's GOOOO!
 
 (Video version coming soon!)
@@ -17,41 +22,64 @@ Let's GOOOO!
 ## Step 0. Take a tour of the Lens Protocol ecosystem.
 
 Let's start by taking a look at what Lens Protocol has to offer!
+
 If you visit the Lens website, you'll see two links immediately.
-Developer Garden - takes you to documentation and guides
-Join Discord - takes you to the community chat server
+
+* Developer Garden - takes you to documentation and guides
+* Join Discord - takes you to the community chat server
+
 We'll visit the Developer Garden in a second, but before we do that, let's check out the menu bar options in the top right.
 
 NOTE: You do not need a Lens handle to complete this tutorial! 
+
 Here, I'll draw your attention to two things:
-Claim Handle - As of now (7/13/2022), Lens Protocol is still in open beta, so you'll need to get allowlisted in order to claim a handle for your wallet address. Luckily, if you've been following the Road To Web3 community program and have earned Proof of Knowledge NFTs in the past, you're likely to be allowlisted already! If not, please come into the Alchemy Discord and ask about it in the #week-10 channel. Once you get your handle, check out the Road To Web3 community on Lenster 🔥
-Apps - This link takes you to a list of community-built web applications, including ones like Lensfrens, Lenster, Phaver, Alps Finance, Refract, and more.
+
+* Claim Handle - As of now (7/13/2022), Lens Protocol is still in open beta, so you'll need to get allowlisted in order to claim a handle for your wallet address. Luckily, if you've been following the Road To Web3 community program and have earned Proof of Knowledge NFTs in the past, you're likely to be allowlisted already! If not, please come into the Alchemy Discord and ask about it in the #week-10 channel. Once you get your handle, check out the Road To Web3 community on Lenster 🔥
+* Apps - This link takes you to a list of community-built web applications, including ones like Lensfrens, Lenster, Phaver, Alps Finance, Refract, and more.
 
 I want to take a quick moment to illustrate the power of Lens Protocol. 
+
 If you visit this profile page on lensfrens - https://www.lensfrens.xyz/thatguyintech.lens - you'll see my account, which should look something like this:
+
+(todo: insert pic)
 
 Now if you visit this completely different web application Lenster - https://lenster.xyz/u/thatguyintech.lens - you'll see me again, with the exact same profile data, except an entirely different experience, even including posts / comments / reactions from other profiles.
 
 Nothing super mind-blowing so far, but stick with me here.
+
 Check out the other apps.
+
 Phaver - Social mobile app with Lens support that ALSO lets you "stake" to curate other peoples' posts, thereby allowing people to earn money for their content.
+
+(todo: add pic)
 
 Refract - It's like Hacker News, except all the links and posts that are shared here are powered by Lens Protocol.
 
+(todo: add pic)
+
 These apps are all built by different people, different teams, with different user experiences and product goals.
+
 BUT, all the underlying data is the same, as if they all shared the same database and APIs.
+
 How can that be?
+
 Turns out, a shared database and public API are exactly the fundamental idea of Lens Protocol. That's why this technology has so much potential. 
+
 Every piece of data is an NFT.
+
 Every post, every comment, every reaction, every FOLLOW. Each of these pieces of data is stored as a non-fungible token created by and controlled by you, the creator.
+
 That means that the digital content and relationships we create as users are owned by us and can be taken to any application built on top of the protocol!
 Now let's dig in!
 
 ## Step 1. Set up a Next.js application and install Apollo
 Open a command line. Use the create-next-app to start a project that will be named road-to-lens
-npx create-next-app road-to-lens
 
-The generated repo will be called road-to-lens, and you should have the following directory structure:
+`npx create-next-app road-to-lens`
+
+The generated repo will be called `road-to-lens`, and you should have the following directory structure:
+
+```bash
 thatguyintech@albert road-to-lens % tree -L 1
 .
 ├── README.md
@@ -62,9 +90,15 @@ thatguyintech@albert road-to-lens % tree -L 1
 ├── public
 ├── styles
 └── yarn.lock
+```
+
 Let's also install our graphql client while we're here. We'll be using Apollo to query Lens Protocol for data.
-npm install @apollo/client graphql
+
+`npm install @apollo/client graphql`
+
 After this finishes, we can perform a sanity check by starting a local server and loading up the webpage:
+
+```bash
 thatguyintech@albert road-to-lens % npm run dev
 
 > road-to-lens@0.1.0 dev
@@ -73,7 +107,11 @@ thatguyintech@albert road-to-lens % npm run dev
 ready - started server on 0.0.0.0:3000, url: http://localhost:3000
 info  - SWC minify release candidate enabled. https://nextjs.link/swcmin
 event - compiled client and server successfully in 4.2s (169 modules)
+```
+
 Loading up http://localhost:3000 should give you a basic template page that looks like this:
+
+(todo: insert pic)
 
 ## Step 2. Try Apollo GraphQL out on the index.js page with Recommended Profiles from Lens
 
