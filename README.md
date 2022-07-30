@@ -1,3 +1,9 @@
+# Quickstart
+
+`npm run dev` to run the local server and see what this webapp looks like!
+
+Keep reading for the full tutorial and backstory on what this project is..
+
 # How to Create a Decentralized Twitter with Lens Protocol
 
 There's been a lot of discussion lately about how much control social media giants like Facebook and Twitter have. Regardless of what your opinion on it is, I'd like to share an experiment with you that is super exciting.
