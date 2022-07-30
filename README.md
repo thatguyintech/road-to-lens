@@ -1,3 +1,5 @@
+![road to web3 week 10 lens protocol banner](rtw3-yt-banner.png)
+
 # Quickstart
 
 `npm run dev` to run the local server and see what this webapp looks like!
