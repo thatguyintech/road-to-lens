@@ -116,10 +116,18 @@ Loading up http://localhost:3000 should give you a basic template page that look
 ## Step 2. Try Apollo GraphQL out on the index.js page with Recommended Profiles from Lens
 
 Let's get acquainted with Apollo and GraphQL by loading recommended Lens profiles on the home page.
+
 First, set up the Apollo provider to wrap our entire app so that we have access to methods like useQuery and useMutation later on.
-Create a file in the top-level directory called apollo-client.js
+
+Create a file in the top-level directory called `apollo-client.js`
+
+```
 thatguyintech@albert road-to-lens % touch apollo-client.js
+```
+
 We'll initialize a client here with the base url pointed at the Lens Matic Mainnet API:
+
+```javascript
 // ./apollo-client.js
 
 import { ApolloClient, InMemoryCache } from "@apollo/client";
@@ -146,8 +154,13 @@ function MyApp({ Component, pageProps }) {
 }
 
 export default MyApp
-You can see here we've added the <ApolloProvider client={client}> as a wrapper. This gives our entire app superpowers -- everywhere else we'll be able to use utility methods like useQuery and useMutation to fetch data from the Lens API and to send updates as well.
-One last update before we can check back on localhost. Let's update /pages/index.js to make a query to fetch Recommended Profiles from Lens:
+```
+
+You can see here we've added the `<ApolloProvider client={client}>` as a wrapper. This gives our entire app superpowers -- everywhere else we'll be able to use utility methods like useQuery and useMutation to fetch data from the Lens API and to send updates as well.
+
+One last update before we can check back on localhost. Let's update `/pages/index.js` to make a query to fetch Recommended Profiles from Lens:
+
+```javascript
 import { useQuery, gql } from "@apollo/client";
 
 const recommendProfiles = gql`
@@ -264,21 +277,33 @@ export default function Home() {
     </div>
   )
 }
+```
+
 We're doing a couple of key things with this change:
-Define a GraphQL query called RecommendedProfiles.
-Fetch a list of profiles by calling useQuery with the RecommendedProfiles query -> which gets returned in the data variable.
-Display some profile information such as data.profile.name, data.profile.bio, and data.profile.attributes.
+
+* Define a GraphQL query called `RecommendedProfiles`.
+* Fetch a list of profiles by calling useQuery with the `RecommendedProfiles` query -> which gets returned in the data variable.
+* Display some profile information such as `data.profile.name`, `data.profile.bio`, and `data.profile.attributes`.
+
 Go back to http://localhost:3000/ (make sure your local server is running), and then voilá, you should see this really simple list of profiles!
 
 Ugly, but cool right? 
-If you want to pause here and do some more exploration, you can add a console.log statement in your /pages/index.js file to see some more of the data that's returned from the GraphQL query.
-For example, by adding console.log(data) , you'll be able to pull up the developer console on your browser and see the profile data.
+
+If you want to pause here and do some more exploration, you can add a `console.log` statement in your `/pages/index.js` file to see some more of the data that's returned from the GraphQL query.
+
+For example, by adding `console.log(data)` , you'll be able to pull up the developer console on your browser and see the profile data.
 
 We'll look at this data more later and clean up the page designs :)
+
 and a reminder: all of that data is stored on the Polygon blockchain as NFTs!
+
 What the Lens team is doing with their API is just indexing all the on-chain data so that it's easier for developers to fetch and build using the NFTs!
+
 A quick sanity check at this point.. 
+
 Your directory structure should look something like this:
+
+```bash
 thatguyintech@albert road-to-lens % tree -L 2
 .
 ├── README.md
@@ -298,10 +323,17 @@ thatguyintech@albert road-to-lens % tree -L 2
 │   ├── Home.module.css
 │   └── globals.css
 └── yarn.lock
-Step 2. Let's make the profiles list look nicer
+```
+
+## Step 3. Let's make the profiles list look nicer
+
 In this part we'll refactor our code to make it easier to navigate, AND we'll style our components so that the UI looks much cleaner.
+
 Starting with the refactor:
-Here's our new /pages/index.js
+
+Here's our new `/pages/index.js`
+
+```javascript
 import { useQuery } from "@apollo/client";
 import recommendedProfilesQuery from '../queries/recommendedProfilesQuery.js';
 import Profile from '../components/Profile.js';
@@ -321,10 +353,18 @@ export default function Home() {
     </div>
   )
 }
+```
+
 We're moving the recommendProfilesQuery into a separate graphql document in a new folder you need to create called queries:
+
+```
 mkdir queries
 touch queries/recommendedProfilesQuery.js
+```
+
 and then copy the RecommendedProfiles doc over to this file:
+
+```javascript
 // queries/recommendedProfilesQuery.js
 
 import {gql} from '@apollo/client';
@@ -413,11 +453,20 @@ export default gql`
     }
   }
 `;
-And then let's also create the Profile component that we introduced in the index.js page above ( import Profile from '../components/Profile.js';)
+```
+
+And then let's also create the Profile component that we introduced in the index.js page above `( import Profile from '../components/Profile.js';)`
+
 We should organize it into a new directory called components.
+
+```
 mkdir components
 touch components/Profile.js
+```
+
 And then just copy this structure in:
+
+```javascript
 // components/Profile.js
 
 import Link from "next/link";
@@ -473,10 +522,17 @@ export default function Profile(props) {
     </div>
   );
 }
+```
+
 This Profile component accepts props as an input, and expects the props object to have a profile field that includes all the information we might want to display when we render the component.
+
 While we're here, we added the profile picture and follower/following counts as well!
+
 Now, once again, let's check our work. Checking our work often is a good habit because it allows us to catch bugs quickly :) 
+
 Make sure your server is running:
+
+```
 thatguyintech@albert road-to-lens % npm run dev
 
 > road-to-lens@0.1.0 dev
@@ -484,17 +540,33 @@ thatguyintech@albert road-to-lens % npm run dev
 
 ready - started server on 0.0.0.0:3000, url: http://localhost:3000
 And go visit localhost: http://localhost:3000/
+```
+
 You should see something like this: 
+
+(todo: insert pic)
 
 It's still not that good looking yet, but hey we have photos!
 Before we finish this step, let's take advantage of the CSS we included in the Profile component.
+
 If you've never used Tailwind CSS before, these tags:
+
+```javascript
 uppercase tracking-wide text-sm text-indigo-500 font-semibold 
+```
+
 all come from the utility-first fundamentals of Tailwind's design (see docs).
+
 So really all we have to do here is install Tailwind, as per their installation instructions:
+
+```
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
+```
+
 Copy these configs so that Tailwind knows which paths to load styles for in our project. We want everything in the pages folder and components folder to be covered, so we use these paths:
+
+```javascript
 // tailwind.config.js
 
 module.exports = {
@@ -507,30 +579,52 @@ module.exports = {
   },
   plugins: [],
 }
+```
+
 Now we wrap up by adding the Tailwind directives to our CSS file:
+
+```css
 /* ./styles/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+```
+
 And then re-start the server and see how it looks now!
 
 It looks amazing. Even has drop-shadows and everything :) 
+
 Now.. some of you may have noticed that I included some <Link>s in the Profile component, and then when you click on one of the profiles, it links to a new page! 
+
 For example, clicking on DAVIDEV.LENS's card takes us to http://localhost:3000/profile/0x16 and shows a 404 error.
 
 Have no fear, in the next step let's build out this page and make a second GraphQL query to fetch Publications (aka "posts" like on other social media platforms).
 
 ## Step 3. Create individual profile pages
+
 One of the coolest things about building quickly with the Next.js framework is the routing! For our individual profile pages, all we have to do to create the page, is to make a folder under the pages folder that has the same name as our Profile component. And then add an [id].js file that can be used for any dynamic id passed into the route!
+
 Here's what I mean:
+
+```bash
 road-to-lens % mkdir pages/profile
 road-to-lens % touch pages/profile/\[id\].js
+```
+
 We'll fill out the pages/profile/[id].js file in a second. But with this file structure in place, our Next.js app will be able to serve requests for urls such as:
-http://localhost:3000/profile/0x9752
-http://localhost:3000/profile/0x25c4
+
+* http://localhost:3000/profile/0x9752
+* http://localhost:3000/profile/0x25c4
+
 So let's finish this out by setting up a new GraphQL request to the Lens API to fetch profile information, and then we'll wrap up by building the component in the [id].js file.
+
 For fetching individual profile info, let's create a graphql document like we did earlier for fetching the entire recommended profiles list:
+
+```
 road-to-lens % touch queries/fetchProfileQuery.js
+```
+
+```javascript
 // queries/fetchProfileQuery.js
 
 import { gql } from '@apollo/client';
@@ -619,7 +713,11 @@ query($request: SingleProfileQueryRequest!) {
     }
   }
 `;
+```
+
 Now let's use this query in the individual profile page! 
+
+```javascript
 // pages/profile/[id].js
 
 import { useQuery } from "@apollo/client";
@@ -644,38 +742,56 @@ export default function ProfilePage() {
 
   return <Profile profile={data.profile} displayFullProfile={true}/>
 }
+```
+
 If you take a look at the file we've added, you'll see a familiar useQuery() call that takes in the fetchProfileQuery GraphQL document imported from "../../queries/fetchProfileQuery.js". 
+
 What's new is that we're also now introducing the useRouter() hook. This hook allows us to grab whatever the variable [id] value is from the query params in the url at runtime, and then use that in our code.
+
 That means that if we have these URLs:
-http://localhost:3000/profile/0x9752
-http://localhost:3000/profile/0x25c4
-The useRouter() call would fetch the following ids for const { id } = router.query; : 
-0x9752
-0x25c4
+
+* http://localhost:3000/profile/0x9752
+* http://localhost:3000/profile/0x25c4
+
+The useRouter() call would fetch the following ids for `const { id } = router.query;`:
+* `0x9752`
+* `0x25c4`
+
 And then we use those ids to pass into the fetchProfileQuery so that we can grab just the profile of the person we're browsing through in the moment. You can find the full documentation for the Get Profile request here.
+
 Ok. Hit save. Refresh the page! What do you see?
 
-
 It's Vitto and me!!
+
 Alright if everything is going well for you so far -- make sure to celebrate this milestone (or ask for help if you're stuck).
+
 Take a screenshot of a profile, and then:
-Share it on Twitter: https://twitter.com/TheRoadToWeb3
-Share it on Telegram: https://t.me/+kSVKod0rKbNkOTA5
-Share it in Discord: https://discord.gg/7HDgyH7u2v
+* Share it on Twitter: https://twitter.com/TheRoadToWeb3
+* Share it on Telegram: https://t.me/+kSVKod0rKbNkOTA5
+* Share it in Discord: https://discord.gg/7HDgyH7u2v
+
 You're more than halfway there!
 
 ## Step 4. Load user posts on the profile page
+
 Let's make the profile pages a little more interesting by fetching some of the posts that the user has made. 
+
 In Lens Protocol -- posts, comments, and mirrors (aka "re-tweets") -- are all classified under the Publications data model.
+
 You can find the documentation for the Publication endpoints here. We will be focusing on the GET Publication operation.
+
 Once again, let's follow the same order of:
-Set up the GraphQL query document.
-Update the profile page to use the new GraphQL query.
-Create a new component definition for "posts".
-Pass the data returned from Lens API into the new components.
-Test and debug the page!
-1. Set up the GraphQL query document
+
+1. Set up the GraphQL query document.
+2. Update the profile page to use the new GraphQL query.
+3. Create a new component definition for "posts".
+4. Pass the data returned from Lens API into the new components.
+5. Test and debug the page!
+
+### 1. Set up the GraphQL query document
 This time we won't need a brand new document file. We can modify the query we started in fetchProfileQuery.js to also ask for publications in the same request. That's the power of GraphQL! Unlike REST API calls, you can request as much or as little as you want in a single request. Let's make this update to queries/fetchProfileQuery.js:
+
+```javascript
 import { gql } from "@apollo/client";
 
 export default gql`
@@ -1077,14 +1193,23 @@ export default gql`
     }
   }
 `;
+```
+
 Note that we did add a new query input arg: $publicationsRequest: PublicationsQueryRequest!. This is something we'll have to make sure we pass in as an input argument when we fire the query.
-3. Update the profile page to use the new GraphQL query.
+
+### 2. Update the profile page to use the new GraphQL query.
 On the profile page, the only thing we really need to do for this step is to add the publication request for the posts that we want. The request itself should look like this:
+
+```javascript
 publicationsRequest: {
   profileId: id,
   publicationTypes: ["POST"], // We really only want POSTs
 },
+```
+
 So let's add it into the useQuery input argument options:
+
+```javascript
 // pages/profile/[id].js
 
 import { useQuery, useMutation } from "@apollo/client";
@@ -1137,14 +1262,27 @@ export default function Post(props) {
     </div>
   );
 }
+```
+
 If you compare this simple component with the Profile component, you'll see that they both follow a very simple pattern, which is that they accept a props object that has the data needed by the component to render certain parts of it. 
+
 In this case, we only really need one core piece of information from the posts:
+
+```javascript
 post.metadata.content
+```
+
 Given that this metadata field was the only one we needed, you can actually go back to the GraphQL document later and delete fields that we aren't using in the end feature.
+
 This component also uses Tailwind CSS to style.
-4. Pass the data returned from Lens API into the new components
+
+### 3. Pass the data returned from Lens API into the new components
+
 Back to the profile page (pages/profile/[id].js):
+
 Now we can import the <Post/> component onto the profile page and use it to render all the posts we get back from the API.
+
+```javascript
 import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import fetchProfileQuery from "../../queries/fetchProfileQuery.js";
@@ -1178,39 +1316,58 @@ export default function ProfilePage() {
     </div>
   );
 }
+```
+
 Notice near the bottom of the snippet that it was really these lines of code:
+```javascript
       {data.publications.items.map((post, idx) => {
         return <Post key={idx} post={post}}/>;
       })}
+```
+
 that are doing the heavy lifting in this step. But with it added, we should be able to try out our posts feature!
+
 5. Test and debug
+
 If all goes well, you should now be able to see posts be populated under the profile card! 
 
 Congratulations, you're well on your way to becoming a decentralized social media developer :) 
 
 ## Other APIs and Resources
+
 Hopefully by this point, you've completed a number of the other Road To Web3 challenges and you enjoyed the process of getting to this point. This week's lesson was all about how to use APIs that are built on top of NFTs and a decentralized protocol. 
+
 I highly recommend you to take time to explore the Lens Documentation, try out different endpoints, and read through the sample code hosted in this repo:
 
-Here are some other web3 apis on the cutting edge:
-The MintKudos PoK Tokens APIs - created by Kei @ Contribution Labs
-Lit Protocol SDK and tutorial - created by Deb @ Lit Protocol
+Here are some other really exciting web3 apis that can help you build decentralized social media:
+
+* The MintKudos PoK Tokens APIs - created by Kei @ Contribution Labs
+* Lit Protocol SDK and tutorial - created by Deb @ Lit Protocol
+
 With these tools and data access in your hands, I'm really excited to see what y'all come up with :) 
+
 A Web3 Yoga Social Network?
 An exclusive hangout spot only for Road to Web3 PoK token holders?
 A new-age online classroom where teachers get paid directly by students for the content and education piece by piece via your dapp?
-The possibilities are endless 
+
+The possibilities are endless...
 
 ## Challenges
 This week's content is complex, so the challenge options I'm giving you are intentionally vague so that you can explore however you'd like. Pick at least one of the options below and see where you can get with it! 
-Using the Lens API, query a new piece of information that was not covered in the tutorial and display it on your site.
-Using the Lens API, figure out how to do authentication and mutations for actions such as reacting, following, or creating new publications.
-Deploy your application to the world wide web, using a service like Repl.it or Vercel.
-Use the Lit Protocol SDK to token-gate access to your Lens protocol posts so that only MintKudos token holders can view them.
+
+1. Using the Lens API, query a new piece of information that was not covered in the tutorial and display it on your site.
+2. Using the Lens API, figure out how to do authentication and mutations for actions such as reacting, following, or creating new publications.
+3. Deploy your application to the world wide web, using a service like Repl.it or Vercel.
+4. Use the Lit Protocol SDK to token-gate access to your Lens protocol posts so that only MintKudos token holders can view them.
+
 Don't forget to submit your work here so that you can get this week's Proof of Knowledge NFT!
+
 Submission form: https://alchemyapi.typeform.com/roadtoweekten
 
 ## Congratulations!
+
 You have successfully learned how to navigate, query, and build using the Lens Protocol! 🔥
+
 Want the video version of this tutorial? Subscribe to the Alchemy YouTube channel and join our Discord community to find thousands of developers ready to help you out! 
+
 We are always looking to improve this learning journey, please share any feedback you have with us! https://alchemyapi.typeform.com/roadtofeedback
